@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "261400152264",
+    "project_id": "sistem-monitoring-mobil",
+    "storage_bucket": "sistem-monitoring-mobil.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:261400152264:android:3faf84df85938019e5fdfd",
+        "android_client_info": {
+          "package_name": "com.example.sistem_monitoring_mobil"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdHITm3S01VHrk-67wA_g69fa1G05IUSA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
