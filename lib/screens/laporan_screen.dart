@@ -24,6 +24,7 @@ class _LaporanScreenState extends State<LaporanScreen> {
       backgroundColor: Colors.blue.shade50,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         title: const Text(

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:sistem_monitoring_mobil/widgets/catat_kembali_dialog.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key, required this.onNavigate});
@@ -51,44 +52,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-  // HEADER
-  Widget _buildHeader() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(24),
-          bottomRight: Radius.circular(24),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
+  // HEADER BARU (AppBar 3 Baris + Ikon)
+  PreferredSizeWidget _buildHeader() {
+    return AppBar(
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.white,
+      elevation: 2,
+      shadowColor: Colors.black12,
+      toolbarHeight: 90,
+      centerTitle: true,
+      iconTheme: const IconThemeData(color: Colors.white),
+      title: Column(
         children: [
-          const Text(
-            "Monitoring Mobil",
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              SizedBox(width: 6),
+              Text(
+                "Monitoring Mobil",
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           const Text(
             "YPP Subulul Huda",
-            style: TextStyle(color: Colors.black54),
+            style: TextStyle(color: Colors.black54, fontSize: 14),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text(
             _currentDateTime,
-            style: const TextStyle(fontSize: 13, color: Colors.black54),
+            style: const TextStyle(color: Colors.black54, fontSize: 12),
           ),
         ],
       ),
@@ -132,7 +130,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // QUICK ACTION
+  // QUICK ACTION BUTTON
   Widget _buildQuickAction(
     String text,
     Color color,
@@ -141,7 +139,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   ) {
     return Expanded(
       child: ElevatedButton(
-        onPressed: onPressed, // sekarang bisa null atau custom
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           padding: const EdgeInsets.symmetric(vertical: 30),
@@ -170,9 +168,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // SEDANG DIGUNAKAN
+  // SEDANG DIGUNAKAN CARD
   Widget _buildUsedCard() {
     bool isUsed = true;
+
     if (!isUsed) {
       return Container(
         padding: const EdgeInsets.all(16),
@@ -264,7 +263,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      showCatatKembaliPopup(context);
+                    },
+
                     icon: const Icon(Icons.logout, size: 18),
                     label: const Text("Catat Kembali"),
                     style: ElevatedButton.styleFrom(
@@ -290,7 +292,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // HISTORY
+  // HISTORY CARD
   Widget _buildHistoryCard(
     String name,
     String desc,
@@ -373,11 +375,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue.shade50,
+      appBar: _buildHeader(), // <-- HEADER BARU
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [
-              _buildHeader(),
               const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -401,6 +403,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ],
                     ),
                     const SizedBox(height: 20),
+
+                    // QUICK ACTION
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -438,16 +442,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 "Catat Kembali",
                                 Colors.green.shade600,
                                 Icons.check_circle_outline,
-                                () {},
+                                () {
+                                  showCatatKembaliPopup(
+                                    context,
+                                  ); // <-- ini harus sesuai nama fungsi di file dialog
+                                },
                               ),
                             ],
                           ),
                         ],
                       ),
                     ),
+
                     const SizedBox(height: 20),
                     _buildUsedCard(),
+
                     const SizedBox(height: 20),
+
+                    // HISTORY
                     Container(
                       padding: const EdgeInsets.all(16),
                       margin: const EdgeInsets.only(bottom: 16),
@@ -488,7 +500,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               ),
                             ],
                           ),
+
                           const SizedBox(height: 12),
+
                           _buildHistoryCard(
                             "Pak Budi Santoso",
                             "Antar siswa olimpiade matematika",

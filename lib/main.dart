@@ -27,19 +27,13 @@ class MonitoringApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue.shade700),
         primaryColor: Colors.blue.shade700,
         useMaterial3: true,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-
-      // Halaman awal: Login (Google Sign-In)
       home: const LoginScreen(),
-
-      // Rute tambahan setelah login sukses
       routes: {'/main': (context) => const MainNavigationWidget()},
     );
   }
 }
 
-/// Widget utama setelah login berhasil
 class MainNavigationWidget extends StatefulWidget {
   const MainNavigationWidget({super.key});
 
@@ -48,12 +42,26 @@ class MainNavigationWidget extends StatefulWidget {
 }
 
 class _MainNavigationWidgetState extends State<MainNavigationWidget> {
+  late PageController _pageController;
   int _selectedIndex = 0;
 
+  // LOCK untuk cegah swipe saat scroll vertical
+  bool _isVerticalScroll = false;
+  double _startX = 0;
+  double _startY = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeOut,
+    );
   }
 
   List<Widget> get _screens => [
@@ -65,12 +73,53 @@ class _MainNavigationWidgetState extends State<MainNavigationWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade50,
-      body: _screens[_selectedIndex],
-      bottomNavigationBar: CustomBottomNavBar(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
+    return GestureDetector(
+      // Detect arah awal
+      onPanStart: (d) {
+        _startX = d.localPosition.dx;
+        _startY = d.localPosition.dy;
+      },
+
+      onPanUpdate: (d) {
+        double diffX = (d.localPosition.dx - _startX).abs();
+        double diffY = (d.localPosition.dy - _startY).abs();
+
+        // Jika swipe lebih dominan vertikal → kunci swipe horizontal
+        if (diffY > diffX) {
+          if (!_isVerticalScroll) {
+            setState(() => _isVerticalScroll = true);
+          }
+        } else {
+          if (_isVerticalScroll) {
+            setState(() => _isVerticalScroll = false);
+          }
+        }
+      },
+
+      onPanEnd: (_) => setState(() => _isVerticalScroll = false),
+
+      child: Scaffold(
+        backgroundColor: Colors.grey.shade50,
+
+        body: PageView(
+          controller: _pageController,
+
+          // Jika user scroll vertical → swipe page dimatikan
+          physics: _isVerticalScroll
+              ? const NeverScrollableScrollPhysics()
+              : const BouncingScrollPhysics(),
+
+          onPageChanged: (index) {
+            setState(() => _selectedIndex = index);
+          },
+
+          children: _screens,
+        ),
+
+        bottomNavigationBar: CustomBottomNavBar(
+          selectedIndex: _selectedIndex,
+          onItemTapped: _onItemTapped,
+        ),
       ),
     );
   }

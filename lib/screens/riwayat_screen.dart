@@ -90,6 +90,7 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
       backgroundColor: Colors.blue.shade50,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         elevation: 0,
         title: const Text(
           'Riwayat Pemakaian',

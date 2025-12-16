@@ -27,6 +27,7 @@ class _CatatScreenState extends State<CatatScreen> {
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black87),
       ),
